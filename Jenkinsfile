@@ -12,7 +12,7 @@ pipeline{
     }
     
     stages{
-        stage('Clone Repo')
+        stage('Clone Repository')
         {
             steps{
                 git 'https://github.com/mukesh3/star-agile-banking-finance.git'
