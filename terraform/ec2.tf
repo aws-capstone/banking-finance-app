@@ -5,7 +5,12 @@ resource "tls_private_key" "mykey" {
 resource "aws_key_pair" "aws_key" {
   key_name   = "web-key-ec2"
   public_key = tls_private_key.mykey.public_key_openssh
+
+  provisioner "local-exec" {
+    command = "echo '${tls_private_key.mykey.private_key_openssh}' > ./web-key-ec2.pem && chmod 400 ./web-key-ec2.pem"
+    }
 }
+
 
 resource "aws_ssm_parameter" "ec2_private_key" {
   name        = "/capstone/project1/ec2_private_key"
