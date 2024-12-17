@@ -118,7 +118,7 @@ pipeline{
         stage('Configure Test Server with Ansible') {
             steps {
                 // Run the Ansible playbook using the generated hosts file
-                sh 'sleep 120'
+                sh 'sleep 60'
                 sh 'ansible-playbook -i hosts ansible/playbook_docker.yml'
                 sh 'ansible-playbook -i hosts ansible/playbook_selenium.yml'
             }
