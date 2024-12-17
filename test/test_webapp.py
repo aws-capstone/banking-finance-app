@@ -16,7 +16,7 @@ chrome_binary_path = "/usr/local/bin/chrome-linux64/"
 chrome_options.binary_location = chrome_binary_path
 
 # Path to your ChromeDriver
-service = Service('/usr/local/bin/chromedriver-linux64/')
+service = Service('/usr/local/bin/chromedriver-linux64/chromedriver')
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # Retrieve the hostname from the environment variable 
