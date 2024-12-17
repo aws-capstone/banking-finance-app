@@ -6,9 +6,18 @@ resource "aws_key_pair" "aws_key" {
   key_name   = "web-key-ec2"
   public_key = tls_private_key.mykey.public_key_openssh
 
+}
+
+resource "null_resource" "update_permissions" {
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.mykey.private_key_openssh}' > ./web-key-ec2.pem && chmod 400 ./web-key-ec2.pem"
-    }
+    command = <<EOT
+      echo '${tls_private_key.mykey.private_key_openssh}' > ./web-key-ec2.pem
+      chmod 400 ./web-key-ec2.pem
+    EOT
+  }
+  triggers = {
+    always_run = "${timestamp()}"
+  }
 }
 
 
