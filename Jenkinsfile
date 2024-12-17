@@ -33,37 +33,37 @@ pipeline{
                 git credentialsId: 'github_token-nikitaks97', url: 'https://github.com/aws-capstone/banking-finance-app.git'
             }
         }
-        stage('Test Code')
-        {
-            steps{
-                sh 'mvn test'
-            }
-        }
-        stage('Build Code')
-        {
-            steps{
-                sh 'mvn package'
-            }
-        }
-        stage('Build Image')
-        {
-            steps{
-                sh 'docker build -t capstone_project1:$BUILD_NUMBER .'
-            }
-        }
-
-        stage('Push the Image to dockerhub')
-        {
-            steps{
-                
-        withCredentials([string(credentialsId: 'docker', variable: 'docker')]) 
-                {
-               sh 'docker login -u  nikitaks997797 -p ${docker} '
-               }
-                sh 'docker tag capstone_project1:$BUILD_NUMBER nikitaks997797/capstone_project1:$BUILD_NUMBER '
-                sh 'docker push nikitaks997797/capstone_project1:$BUILD_NUMBER'
-            }
-        }
+        //stage('Test Code')
+        //{
+        //    steps{
+        //        sh 'mvn test'
+        //    }
+        //}
+        //stage('Build Code')
+        //{
+        //    steps{
+        //        sh 'mvn package'
+        //    }
+        //}
+        //stage('Build Image')
+        //{
+        //    steps{
+        //        sh 'docker build -t capstone_project1:$BUILD_NUMBER .'
+        //    }
+        //}
+//
+        //stage('Push the Image to dockerhub')
+        //{
+        //    steps{
+        //        
+        //withCredentials([string(credentialsId: 'docker', variable: 'docker')]) 
+        //        {
+        //       sh 'docker login -u  nikitaks997797 -p ${docker} '
+        //       }
+        //        sh 'docker tag capstone_project1:$BUILD_NUMBER nikitaks997797/capstone_project1:$BUILD_NUMBER '
+        //        sh 'docker push nikitaks997797/capstone_project1:$BUILD_NUMBER'
+        //    }
+        //}
         stage('Terraform Init'){
             steps{
                 dir('terraform'){
@@ -118,15 +118,15 @@ pipeline{
         stage('Configure Test Server with Ansible') {
             steps {
                 // Run the Ansible playbook using the generated hosts file
-                sh 'sleep 60'
-                sh 'ansible-playbook -i hosts ansible/playbook_docker.yml'
+                //sh 'sleep 60'
+                //sh 'ansible-playbook -i hosts ansible/playbook_docker.yml'
                 sh 'ansible-playbook -i hosts ansible/playbook_selenium.yml'
             }
         }
         stage('Deploy to Test Server') {
             steps {
                 // Run the Ansible playbook using the generated hosts file
-                sh 'ansible-playbook -i hosts ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
+                //sh 'ansible-playbook -i hosts ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
             }
         }
         stage('Test the application') {
@@ -136,13 +136,13 @@ pipeline{
             }
         }                                               
     }
-    post {
-        // Clean after build
-        always {
-            cleanWs(cleanWhenNotBuilt: false,
-                    deleteDirs: true,
-                    disableDeferredWipeout: true,
-                    notFailBuild: true,)
-        }
-    }
+    //post {
+    //    // Clean after build
+    //    always {
+    //        cleanWs(cleanWhenNotBuilt: false,
+    //                deleteDirs: true,
+    //                disableDeferredWipeout: true,
+    //                notFailBuild: true,)
+    //    }
+    //}
 }
