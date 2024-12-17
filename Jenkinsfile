@@ -110,7 +110,7 @@ pipeline{
                     // Write the public IP to the Ansible hosts file
                     writeFile file: 'hosts', text: """
                     [webserver]
-                    ${env.EC2_PUBLIC_IP} ansible_user=ubuntu ansible_ssh_private_key_file=./terraform/web-key.pem
+                    ${env.EC2_PUBLIC_IP} ansible_user=ubuntu ansible_ssh_private_key_file=./terraform/web-key-ec2.pem
                     """
                 }
             }
