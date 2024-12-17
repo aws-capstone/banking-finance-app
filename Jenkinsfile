@@ -30,7 +30,7 @@ pipeline{
         stage('Clone Repository')
         {
             steps{
-                git 'https://github.com/mukesh3/star-agile-banking-finance.git'
+                git credentialsId: 'github_token-nikitaks97', url: 'https://github.com/aws-capstone/banking-finance-app.git'
             }
         }
         stage('Test Code')
