@@ -24,6 +24,8 @@ pipeline{
     parameters {
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
         choice(name: 'action', choices: ['apply', 'destroy'], description: 'Select the action to perform')
+        booleanParam(name: 'autoApproveProd', defaultValue: false, description: 'Automatically run apply after generating plan for PROD?')
+        choice(name: 'action', choices: ['apply-prod', 'destroy-prod'], description: 'Select the action to perform')        
     }
     
     stages{
@@ -118,16 +120,16 @@ pipeline{
         stage('Configure Test Server with Ansible') {
             steps {
                 // Run the Ansible playbook using the generated hosts file
-                //sh 'sleep 60'
-                //sh 'ansible-playbook -i hosts ansible/playbook_docker.yml'
+                sh 'sleep 60'
+                sh 'ansible-playbook -i hosts ansible/playbook_docker.yml'
                 sh 'ansible-playbook -i hosts ansible/playbook_selenium.yml'
             }
         }
         stage('Deploy to Test Server') {
             steps {
                 // Run the Ansible playbook using the generated hosts file
-                sh 'echo "Disabled for test"'
-                //sh 'ansible-playbook -i hosts ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
+                //sh 'echo "Disabled for test"'
+                sh 'ansible-playbook -i hosts ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
             }
         }
         stage('Test the application') {
@@ -135,15 +137,71 @@ pipeline{
                 // Run the Ansible playbook using the generated hosts file
                 sh 'ansible-playbook -i hosts ansible/playbook_test_app.yml'
             }
-        }                                               
+        }
+        stage('Terraform Init Prod'){
+            steps{
+                dir('terraform-prod'){
+                  sh ' ls -lrt'
+                  sh 'terraform  init'
+                }
+            }
+        }
+        stage('Terraform Plan Prod'){
+            steps{
+                dir('terraform-prod'){
+                  sh 'terraform plan -out tfplan'
+                  sh 'terraform show -no-color tfplan > tfplan.txt'
+                }
+            }
+        }
+        stage('Apply / Destroy Prod') {
+            steps {
+                dir('terraform-prod'){
+                script {
+                    if (params.action == 'apply-prod') {
+                        if (!params.autoApprove) {
+                            def plan = readFile 'tfplan.txt'
+                            input message: "Do you want to apply the plan?",
+                            parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                        }
+                        sh 'terraform ${action} -input=false tfplan'
+                    } else if (params.action == 'destroy-prod') {
+                        sh 'terraform ${action} --auto-approve'
+                    } else {
+                        error "Invalid action selected. Please choose either 'apply-prod' or 'destroy-prod'."
+                    }
+                }
+                script {
+                    def output = sh(script: 'terraform output -json instance_public_ip', returnStdout: true).trim()
+                    env.EC2_PUBLIC_IP = output.replaceAll('"', '') // Remove quotes if JSON returns them
+                }
+                }
+            }
+        } 
+        stage('Generate Ansible Prod Hosts File') {
+            steps {
+                script {
+                    // Write the public IP to the Ansible hosts file
+                    writeFile file: 'hosts-prod', text: """
+                    [webserver]
+                    ${env.EC2_PUBLIC_IP} ansible_user=ubuntu ansible_ssh_private_key_file=./terraform-prod/web-key-prod-ec2.pem
+                    """
+                }
+            }
+        }
+        stage('Configure Prod Server with Ansible') {
+            steps {
+                // Run the Ansible playbook using the generated hosts file
+                sh 'sleep 60'
+                sh 'ansible-playbook -i hosts-prod ansible/playbook_docker.yml'
+            }
+        }
+        stage('Deploy to Prod Server') {
+            steps {
+                // Run the Ansible playbook using the generated hosts file
+                //sh 'echo "Disabled for test"'
+                sh 'ansible-playbook -i hosts-prod ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
+            }
+        }                                                       
     }
-    //post {
-    //    // Clean after build
-    //    always {
-    //        cleanWs(cleanWhenNotBuilt: false,
-    //                deleteDirs: true,
-    //                disableDeferredWipeout: true,
-    //                notFailBuild: true,)
-    //    }
-    //}
 }
