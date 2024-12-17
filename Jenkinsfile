@@ -126,6 +126,7 @@ pipeline{
         stage('Deploy to Test Server') {
             steps {
                 // Run the Ansible playbook using the generated hosts file
+                sh 'Disabled for test'
                 //sh 'ansible-playbook -i hosts ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
             }
         }
