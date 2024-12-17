@@ -8,14 +8,14 @@ resource "aws_key_pair" "aws_key" {
 }
 
 resource "aws_ssm_parameter" "ec2_private_key" {
-  name        = "capstone/project1/ec2_private_key"
+  name        = "/capstone/project1/ec2_private_key"
   description = "Private key of ec2 instance"
   type        = "SecureString"
   value       = tls_private_key.mykey.private_key_openssh
 }
 
 resource "aws_ssm_parameter" "ec2_public_key" {
-  name        = "capstone/project1/ec2_public_key"
+  name        = "/capstone/project1/ec2_public_key"
   description = "Public key of ec2 instance"
   type        = "SecureString"
   value       = tls_private_key.mykey.public_key_openssh
