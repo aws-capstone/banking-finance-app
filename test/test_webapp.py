@@ -12,8 +12,11 @@ chrome_options.add_argument("--headless")  # Run headless Chrome
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
+chrome_binary_path = "/usr/local/bin/chrome-linux64/"
+chrome_options.binary_location = chrome_binary_path
+
 # Path to your ChromeDriver
-service = Service('/usr/local/bin/chromedriver')
+service = Service('/usr/local/bin/chromedriver_linux64/')
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # Retrieve the hostname from the environment variable 
