@@ -73,5 +73,12 @@
         mode: '0755'
         remote_src: yes
         #extra_opts:
-        #  - --overwrite                
+        #  - --overwrite
+    - name: Add paths to /etc/environment
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        regexp: '^PATH=.*'
+        line: 'PATH="{{ ansible_env.PATH }}:/usr/local/bin/chrome_linux64:/usr/local/bin/chromedriver_linux64"'
+        backrefs: yes
+        state: present        
                               
