@@ -25,7 +25,7 @@ pipeline{
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
         choice(name: 'action', choices: ['apply', 'destroy'], description: 'Select the action to perform')
         booleanParam(name: 'autoApproveProd', defaultValue: false, description: 'Automatically run apply after generating plan for PROD?')
-        choice(name: 'action-prod', choices: ['apply', 'destroy'], description: 'Select the action to perform')        
+        choice(name: 'actionProd', choices: ['apply', 'destroy'], description: 'Select the action to perform')        
     }
     
     stages{
@@ -158,15 +158,15 @@ pipeline{
             steps {
                 dir('terraform-prod'){
                 script {
-                    if (params.action-prod == 'apply') {
+                    if (params.actionProd == 'apply') {
                         if (!params.autoApproveProd) {
                             def plan = readFile 'tfplan.txt'
                             input message: "Do you want to apply the plan?",
                             parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                         }
-                        sh 'terraform ${action-prod} -input=false tfplan'
-                    } else if (params.action-prod == 'destroy') {
-                        sh 'terraform ${action-prod} --auto-approve'
+                        sh 'terraform ${actionProd} -input=false tfplan'
+                    } else if (params.actionProd == 'destroy') {
+                        sh 'terraform ${actionProd} --auto-approve'
                     } else {
                         error "Invalid action selected. Please choose either 'apply' or 'destroy'."
                     }
