@@ -9,4 +9,6 @@
         dest: /home/ubuntu/monitoring/
         mode: '0755'
     - name: Run docker compose to setup monitoring
-      command: cd  /home/ubuntu/monitoring && docker-compose up -d
+      ansible.builtin.shell: |
+        cd  /home/ubuntu/monitoring
+        docker-compose up -d
