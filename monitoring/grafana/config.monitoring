@@ -1,2 +1,3 @@
 GF_SECURITY_ADMIN_PASSWORD=secret92pass
 GF_USERS_ALLOW_SIGN_UP=false
+GF_PATHS_PROVISIONING=/etc/grafana/provisioning

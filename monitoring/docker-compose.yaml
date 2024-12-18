@@ -23,6 +23,11 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
       - 9090:9090
+    deploy:
+      resources:
+        limits:
+          cpus: "0.125"
+          memory: "200M"
     links:
       - cadvisor:cadvisor
       - alertmanager:alertmanager
@@ -58,11 +63,20 @@ services:
     restart: always
     deploy:
       mode: global
+      resources:
+        limits:
+          cpus: "0.125"
+          memory: "200M"
 
   alertmanager:
     image: prom/alertmanager
     ports:
       - 9093:9093
+    deploy:
+      resources:
+        limits:
+          cpus: "0.125"
+          memory: "200M"      
     volumes:
       - ./alertmanager/:/etc/alertmanager/
     networks:
@@ -89,6 +103,10 @@ services:
     restart: always
     deploy:
       mode: global
+      resources:
+        limits:
+          cpus: "0.125"
+          memory: "200M"
 
   grafana:
     image: grafana/grafana
@@ -97,6 +115,11 @@ services:
       - prometheus
     ports:
       - 3000:3000
+    deploy:
+      resources:
+        limits:
+          cpus: "0.125"
+          memory: "200M"      
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
