@@ -49,7 +49,7 @@ resource "aws_route" "sa-route" {
 
 variable "sg_ports" {
 type = list(number)
-default = [80,8080,22,443]
+default = [80,8080,22,443,3000]
 }
 
 

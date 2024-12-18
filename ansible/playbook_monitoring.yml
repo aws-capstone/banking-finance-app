@@ -3,7 +3,10 @@
   hosts: all
   become: yes
   tasks:
-    - name: Copy the Python script to the remote host
-      community.docker.docker_compose_v2:
-        project_src:: ../monitoring
-        state: present
+    - name: Copy the Monioring Configuration to remote host
+      copy:
+        src: ../monitoring/
+        dest: /home/ubuntu/monitoring/
+        mode: '0755'
+    - name: Run docker compose to setup monitoring
+      command: cd  /home/ubuntu/monitoring && docker-compose up -d
