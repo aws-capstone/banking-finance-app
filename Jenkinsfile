@@ -202,6 +202,12 @@ pipeline{
                 //sh 'echo "Disabled for test"'
                 sh 'ansible-playbook -i hosts-prod ansible/playbook_deploy.yml --extra-vars "BUILD_NUMBER=${BUILD_NUMBER}"'
             }
-        }                                                       
+        }
+        stage('Configure Grafana Prometheus') {
+            steps {
+                sh 'ansible-playbook -i hosts ansible/playbook_monitoring.yml -v'
+                sh 'ansible-playbook -i hosts-prod ansible/playbook_monitoring.yml -v'
+            }
+        }                                                               
     }
 }
